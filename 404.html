@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Перенаправление</title>
+  <script type="text/javascript">
+    // Перенаправляем на главную для корректной работы SPA-роутинга
+    const segment = 1; // если ваш сайт в корне репозитория
+    const path = window.location.pathname.split('/').slice(1, 1 + segment).join('/');
+    window.location.href = '/' + (path ? path + '/' : '') + '?p=' + window.location.pathname;
+  </script>
+</head>
+<body>
+  Перенаправление...
+</body>
+</html>

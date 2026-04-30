@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forex Signals</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Контейнер входа (показывается, когда пользователь не вошёл) -->
+  <div id="login-container">
+    <h2>Вход в систему</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+    </form>
+    <p id="login-error" style="color:red;"></p>
+    <hr>
+    <p>Нет аккаунта? <button id="show-register">Зарегистрироваться</button></p>
+  </div>
+
+  <!-- Контейнер регистрации (скрыт по умолчанию) -->
+  <div id="register-container" style="display:none;">
+    <h2>Регистрация</h2>
+    <form id="register-form">
+      <input type="email" id="reg-email" placeholder="Email" required>
+      <input type="password" id="reg-password" placeholder="Пароль" required>
+      <button type="submit">Создать аккаунт</button>
+    </form>
+    <p id="register-error" style="color:red;"></p>
+    <button id="show-login">Назад ко входу</button>
+  </div>
+
+  <!-- Основная панель после входа -->
+  <div id="signals-container" style="display:none;">
+    <header>
+      <h1>Торговые сигналы</h1>
+      <button id="logout-btn">Выйти</button>
+    </header>
+    <div id="signals-list">
+      <!-- Здесь будут отображаться карточки сигналов -->
+    </div>
+  </div>
+
+  <!-- Firebase SDKs (обязательно именно эти версии) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Ваш конфиг -->
+  <script src="firebase-config.js"></script>
+  <!-- Основная логика -->
+  <script src="app.js"></script>
+</body>
+</html>
