@@ -96,27 +96,35 @@ function loadSignals() {
 }
 
 // === Панель управления сканированием ===
-function setupControlPanel() {
-    document.getElementById('start-scan-btn').addEventListener('click', async () => {
-        const symbol = document.getElementById('sel-symbol').value;
-        const timeframe = document.getElementById('sel-timeframe').value;
-        const duration = parseInt(document.getElementById('sel-duration').value);
-        const precision = document.getElementById('sel-precision').value;
-        const cmdRef = db.collection('commands').doc();
-        await cmdRef.set({
-            status: "new",
-            symbol,
-            timeframe,
-            duration_minutes: duration,
-            precision,
-            created_at: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        scanStatus.textContent = 'Команда отправлена...';
+document.getElementById('start-scan-btn').addEventListener('click', async function() {
+  const btn = this;
+  btn.disabled = true;   // блокируем кнопку
+  document.getElementById('scan-status').textContent = 'Команда отправляется...';
+
+  const symbol = document.getElementById('sel-symbol').value;
+  const timeframe = document.getElementById('sel-timeframe').value;
+  const duration = parseInt(document.getElementById('sel-duration').value);
+  const precision = document.getElementById('sel-precision').value;
+
+  try {
+    const cmdRef = db.collection('commands').doc();
+    await cmdRef.set({
+      status: "new",
+      symbol,
+      timeframe,
+      duration_minutes: duration,
+      precision,
+      created_at: firebase.firestore.FieldValue.serverTimestamp()
     });
-    document.getElementById('default-mode-btn').addEventListener('click', () => {
-        scanStatus.textContent = 'Обычный режим активен (бот запущен на сервере).';
-    });
-}
+    document.getElementById('scan-status').textContent = 'Сканирование запущено...';
+  } catch(e) {
+    document.getElementById('scan-status').textContent = 'Ошибка отправки команды';
+    console.error(e);
+  } finally {
+    // разблокируем через некоторое время (например, 3 секунды)
+    setTimeout(() => { btn.disabled = false; }, 3000);
+  }
+});
 
 // ======================================================
 //  ИГРА "ЗМЕЙКА" (теперь всегда без стен)
