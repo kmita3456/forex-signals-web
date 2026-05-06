@@ -1,12 +1,15 @@
 // app.js
 const firebaseConfig = {
-    apiKey: "ВАШ_API_KEY",
-    authDomain: "ВАШ_PROJECT.firebaseapp.com",
-    projectId: "ВАШ_PROJECT_ID",
-    storageBucket: "ВАШ_PROJECT.appspot.com",
-    messagingSenderId: "ВАШ_SENDER_ID",
-    appId: "ВАШ_APP_ID"
+  apiKey: "AIzaSyDN4GiOCtmtEiVGt8rwW2kjPqrFwE_vUzE",
+  authDomain: "metatradebot-v1.firebaseapp.com",
+  databaseURL: "https://metatradebot-v1-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "metatradebot-v1",
+  storageBucket: "metatradebot-v1.firebasestorage.app",
+  messagingSenderId: "787315443175",
+  appId: "1:787315443175:web:1d1477a76fd5fe87806942",
+  measurementId: "G-QER5HLXXS5"
 };
+
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
