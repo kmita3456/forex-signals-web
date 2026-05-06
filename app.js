@@ -25,6 +25,32 @@ const dashboard = document.getElementById('dashboard');
 const signalsList = document.getElementById('signals-list');
 const scanStatus = document.getElementById('scan-status');
 
+// === Тема ===
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const body = document.body;
+
+function applyTheme(theme) {
+    if (theme === 'light') {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        themeToggleBtn.textContent = '☀️ Светлая';
+    } else {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        themeToggleBtn.textContent = '🌙 Тёмная';
+    }
+    localStorage.setItem('theme', theme);
+}
+
+// При загрузке устанавливаем сохранённую тему или тёмную по умолчанию
+const savedTheme = localStorage.getItem('theme') || 'dark';
+applyTheme(savedTheme);
+
+themeToggleBtn.addEventListener('click', () => {
+    const current = body.classList.contains('dark-theme') ? 'light' : 'dark';
+    applyTheme(current);
+});
+
 // === Аутентификация ===
 loginBtn.addEventListener('click', () => {
     const email = emailInput.value;
@@ -104,6 +130,7 @@ const canvas = document.getElementById('snake-canvas');
 const ctx = canvas.getContext('2d');
 const scoreSpan = document.getElementById('snake-score');
 const restartBtn = document.getElementById('restart-snake-btn');
+const wallRadios = document.getElementsByName('wall-mode');
 
 let gameInterval = null;
 let gameActive = false;
@@ -112,14 +139,21 @@ let direction = 'right';
 let nextDirection = 'right';
 let food = {};
 let score = 0;
-const gridSize = 20;        // размер сетки (клеток)
-let cellSize = 20;          // размер клетки в пикселях (будет вычисляться)
-const initialSpeed = 150;   // мс на шаг
+const gridSize = 20;
+let cellSize = 20;
+const initialSpeed = 150;
 let speed = initialSpeed;
+let wallMode = 'walls'; // по умолчанию со стенами
 
 // === Инициализация игры ===
 function initGame() {
-    // Размер холста адаптивный, но не больше 400px
+    // Читаем выбранный режим стен
+    for (const radio of wallRadios) {
+        if (radio.checked) {
+            wallMode = radio.value;
+            break;
+        }
+    }
     const maxSize = Math.min(window.innerWidth - 40, 400);
     cellSize = Math.floor(maxSize / gridSize);
     const canvasSize = cellSize * gridSize;
@@ -140,7 +174,6 @@ function initGame() {
     draw();
 }
 
-// === Генерация еды ===
 function generateFood() {
     const max = gridSize - 1;
     let newFood;
@@ -154,10 +187,8 @@ function generateFood() {
     food = newFood;
 }
 
-// === Отрисовка ===
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Сетка
     ctx.strokeStyle = '#222';
     for (let i = 0; i <= gridSize; i++) {
         ctx.beginPath();
@@ -168,17 +199,14 @@ function draw() {
         ctx.lineTo(canvas.width, i * cellSize);
         ctx.stroke();
     }
-    // Еда
     ctx.fillStyle = 'red';
     ctx.fillRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);
-    // Змейка
     snake.forEach((seg, index) => {
         ctx.fillStyle = index === 0 ? '#00ff00' : '#00cc00';
         ctx.fillRect(seg.x * cellSize, seg.y * cellSize, cellSize - 1, cellSize - 1);
     });
 }
 
-// === Игровой цикл ===
 function step() {
     if (!gameActive) return;
     direction = nextDirection;
@@ -190,29 +218,36 @@ function step() {
         case 'left': newHead.x--; break;
         case 'right': newHead.x++; break;
     }
-    // Проверка границ
-    if (newHead.x < 0 || newHead.x >= gridSize || newHead.y < 0 || newHead.y >= gridSize) {
-        gameOver();
-        return;
+
+    // Проверка границ с учётом wallMode
+    if (wallMode === 'walls') {
+        if (newHead.x < 0 || newHead.x >= gridSize || newHead.y < 0 || newHead.y >= gridSize) {
+            gameOver();
+            return;
+        }
+    } else { // без стен – телепортация
+        if (newHead.x < 0) newHead.x = gridSize - 1;
+        if (newHead.x >= gridSize) newHead.x = 0;
+        if (newHead.y < 0) newHead.y = gridSize - 1;
+        if (newHead.y >= gridSize) newHead.y = 0;
     }
+
     // Проверка столкновения с собой
     if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
         gameOver();
         return;
     }
-    // Добавляем голову
+
     snake.unshift(newHead);
-    // Проверка еды
     if (newHead.x === food.x && newHead.y === food.y) {
         score++;
         scoreSpan.textContent = 'Счёт: ' + score;
         generateFood();
-        // Ускорение (опционально)
         if (speed > 80) speed = initialSpeed - (score * 2);
         clearInterval(gameInterval);
         gameInterval = setInterval(step, speed);
     } else {
-        snake.pop();  // Убираем хвост
+        snake.pop();
     }
     draw();
 }
@@ -224,7 +259,6 @@ function gameOver() {
     alert(`Игра окончена! Ваш счёт: ${score}`);
 }
 
-// === Запуск и остановка игры ===
 function startGame() {
     if (gameInterval) clearInterval(gameInterval);
     initGame();
@@ -240,7 +274,6 @@ function stopGame() {
     }
 }
 
-// === Изменение направления ===
 function changeDirection(dir) {
     if (!gameActive) return;
     const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
@@ -249,7 +282,7 @@ function changeDirection(dir) {
     }
 }
 
-// === Клавиши (ПК) ===
+// Клавиши (ПК)
 document.addEventListener('keydown', (e) => {
     if (!gameActive || modal.style.display !== 'flex') return;
     const keyMap = {
@@ -264,17 +297,16 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// === Кнопки управления (мобильные) ===
+// Экранные кнопки
 document.querySelectorAll('.ctrl-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const dir = btn.getAttribute('data-dir');
         if (dir) changeDirection(dir);
     });
-    // Предотвращаем долгий тап (контекстное меню) на мобильных
     btn.addEventListener('contextmenu', e => e.preventDefault());
 });
 
-// === Свайпы на canvas для мобильных ===
+// Свайпы на canvas
 let touchStartX = 0, touchStartY = 0;
 canvas.addEventListener('touchstart', (e) => {
     const touch = e.touches[0];
@@ -290,7 +322,7 @@ canvas.addEventListener('touchend', (e) => {
     const dy = touch.clientY - touchStartY;
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
-    if (Math.max(absDx, absDy) < 20) return; // слишком маленький свайп
+    if (Math.max(absDx, absDy) < 20) return;
     if (absDx > absDy) {
         changeDirection(dx > 0 ? 'right' : 'left');
     } else {
@@ -300,7 +332,7 @@ canvas.addEventListener('touchend', (e) => {
     e.preventDefault();
 }, {passive: false});
 
-// === Открытие/закрытие модалки ===
+// Открытие/закрытие модалки
 openBtn.addEventListener('click', () => {
     modal.style.display = 'flex';
     startGame();
@@ -320,7 +352,6 @@ window.addEventListener('click', (e) => {
 
 restartBtn.addEventListener('click', startGame);
 
-// === Остановка игры при нажатии Escape ===
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.style.display === 'flex') {
         modal.style.display = 'none';
