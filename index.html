@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Forex Signals Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,10 +17,13 @@
 
     <div id="dashboard" style="display: none;">
         <h1>Торговые сигналы</h1>
-        <button id="logout-btn">Выйти</button>
+        <div class="top-bar">
+            <button id="logout-btn">Выйти</button>
+            <button id="snake-game-btn">🐍 Играть в змейку</button>
+        </div>
 
         <!-- Панель управления -->
-        <div id="control-panel" style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
+        <div id="control-panel">
             <h3>Управление сканированием</h3>
             <label>Валютная пара:
                 <select id="sel-symbol">
@@ -57,6 +60,27 @@
 
         <!-- Список сигналов -->
         <div id="signals-list"></div>
+    </div>
+
+    <!-- Модальное окно со змейкой -->
+    <div id="snake-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Змейка</h2>
+            <div class="game-container">
+                <canvas id="snake-canvas"></canvas>
+                <div class="mobile-controls">
+                    <button class="ctrl-btn" data-dir="up">▲</button>
+                    <div class="mid-row">
+                        <button class="ctrl-btn" data-dir="left">◀</button>
+                        <button class="ctrl-btn" data-dir="right">▶</button>
+                    </div>
+                    <button class="ctrl-btn" data-dir="down">▼</button>
+                </div>
+            </div>
+            <div id="snake-score">Счёт: 0</div>
+            <button id="restart-snake-btn">🔄 Заново</button>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
