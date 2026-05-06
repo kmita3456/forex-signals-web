@@ -9,7 +9,6 @@ const firebaseConfig = {
   appId: "1:787315443175:web:1d1477a76fd5fe87806942",
   measurementId: "G-QER5HLXXS5"
 };
-
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -42,7 +41,6 @@ function applyTheme(theme) {
     localStorage.setItem('theme', theme);
 }
 
-// При загрузке устанавливаем сохранённую тему или тёмную по умолчанию
 const savedTheme = localStorage.getItem('theme') || 'dark';
 applyTheme(savedTheme);
 
@@ -121,7 +119,7 @@ function setupControlPanel() {
 }
 
 // ======================================================
-//  ИГРА "ЗМЕЙКА"
+//  ИГРА "ЗМЕЙКА" (теперь всегда без стен)
 // ======================================================
 const modal = document.getElementById('snake-modal');
 const openBtn = document.getElementById('snake-game-btn');
@@ -130,7 +128,6 @@ const canvas = document.getElementById('snake-canvas');
 const ctx = canvas.getContext('2d');
 const scoreSpan = document.getElementById('snake-score');
 const restartBtn = document.getElementById('restart-snake-btn');
-const wallRadios = document.getElementsByName('wall-mode');
 
 let gameInterval = null;
 let gameActive = false;
@@ -143,17 +140,8 @@ const gridSize = 20;
 let cellSize = 20;
 const initialSpeed = 150;
 let speed = initialSpeed;
-let wallMode = 'walls'; // по умолчанию со стенами
 
-// === Инициализация игры ===
 function initGame() {
-    // Читаем выбранный режим стен
-    for (const radio of wallRadios) {
-        if (radio.checked) {
-            wallMode = radio.value;
-            break;
-        }
-    }
     const maxSize = Math.min(window.innerWidth - 40, 400);
     cellSize = Math.floor(maxSize / gridSize);
     const canvasSize = cellSize * gridSize;
@@ -219,18 +207,11 @@ function step() {
         case 'right': newHead.x++; break;
     }
 
-    // Проверка границ с учётом wallMode
-    if (wallMode === 'walls') {
-        if (newHead.x < 0 || newHead.x >= gridSize || newHead.y < 0 || newHead.y >= gridSize) {
-            gameOver();
-            return;
-        }
-    } else { // без стен – телепортация
-        if (newHead.x < 0) newHead.x = gridSize - 1;
-        if (newHead.x >= gridSize) newHead.x = 0;
-        if (newHead.y < 0) newHead.y = gridSize - 1;
-        if (newHead.y >= gridSize) newHead.y = 0;
-    }
+    // Всегда телепортация (без стен)
+    if (newHead.x < 0) newHead.x = gridSize - 1;
+    if (newHead.x >= gridSize) newHead.x = 0;
+    if (newHead.y < 0) newHead.y = gridSize - 1;
+    if (newHead.y >= gridSize) newHead.y = 0;
 
     // Проверка столкновения с собой
     if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
