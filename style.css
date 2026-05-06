@@ -1,47 +1,85 @@
-/* Общие стили */
+/* ===== Переменные для тем ===== */
+body.dark-theme {
+    --bg: #1e1e2f;
+    --surface: #2a2a40;
+    --text: #e0e0e0;
+    --border: #444;
+    --button-bg: #3a3a5c;
+    --button-hover: #5a5a7a;
+    --input-bg: #333;
+    --modal-bg: #2a2a40;
+    --canvas-border: #555;
+}
+body.light-theme {
+    --bg: #f4f4f4;
+    --surface: #ffffff;
+    --text: #222;
+    --border: #ccc;
+    --button-bg: #007bff;
+    --button-hover: #0056b3;
+    --input-bg: #fff;
+    --modal-bg: #ffffff;
+    --canvas-border: #333;
+}
+
+/* Применение переменных */
 body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    background: var(--bg);
+    color: var(--text);
     margin: 0;
     padding: 10px;
+    transition: background 0.3s, color 0.3s;
 }
 
 #auth-container, #dashboard {
     max-width: 800px;
     margin: 20px auto;
-    background: white;
+    background: var(--surface);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
 }
 
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 15px;
+}
+.top-bar h1 {
+    margin: 0;
+    font-size: 1.5rem;
 }
 
 button {
     padding: 8px 16px;
-    background: #007bff;
+    background: var(--button-bg);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background 0.2s;
 }
-button:hover { background: #0056b3; }
+button:hover { background: var(--button-hover); }
 
 input, select {
     padding: 5px;
     margin: 5px 0;
     width: 100%;
     max-width: 200px;
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
 }
 
 .signal-card {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border);
 }
 
 /* Модальное окно */
@@ -59,13 +97,14 @@ input, select {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--modal-bg);
     padding: 20px;
     border-radius: 12px;
     text-align: center;
     position: relative;
     max-width: 95%;
     width: 450px;
+    color: var(--text);
 }
 
 .close-btn {
@@ -84,10 +123,17 @@ input, select {
 
 canvas {
     background: #111;
-    border: 2px solid #333;
+    border: 2px solid var(--canvas-border);
     display: block;
     margin: 0 auto;
-    /* Размер будет задан через JS */
+}
+
+.wall-mode-selector {
+    margin: 10px 0;
+}
+.wall-mode-selector label {
+    margin-right: 15px;
+    cursor: pointer;
 }
 
 .mobile-controls {
