@@ -128,14 +128,6 @@ canvas {
     margin: 0 auto;
 }
 
-.wall-mode-selector {
-    margin: 10px 0;
-}
-.wall-mode-selector label {
-    margin-right: 15px;
-    cursor: pointer;
-}
-
 .mobile-controls {
     margin-top: 15px;
     display: flex;
